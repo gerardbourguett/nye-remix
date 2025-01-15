@@ -8,6 +8,7 @@ import {
 import type { LinksFunction } from "@remix-run/node";
 
 import "./tailwind.css";
+import { Analytics } from "@vercel/analytics/react";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -32,6 +33,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        <Analytics />
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -41,5 +43,20 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  return (
+    <div className="">
+      <main className="flex items-center justify-center pt-16 pb-4">
+        <Outlet />
+      </main>
+      <footer className="w-full py-4 text-center text-sm text-zinc-500">
+        © 2024 - {new Date().getFullYear()}. Created by{" "}
+        <a
+          href="https://gerardabc.tech"
+          className="text-zinc-600 hover:underline"
+        >
+          GerardABC
+        </a>
+      </footer>
+    </div>
+  );
 }
