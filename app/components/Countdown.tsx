@@ -1,51 +1,56 @@
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-import { formatDistanceToNow } from "date-fns";
-import clsx from "clsx";
-import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
-import { Separator } from "./ui/separator";
+const Countdown = () => {
+  const [now, setNow] = useState(() => Date.now());
+  const year = useMemo(() => new Date().getFullYear(), []);
+  //Targetname debe ajustarse al huso horario desde donde se visita la página
+  const targetDate = useMemo(
+    () => new Date(`December 31, ${year} 23:59:59`).getTime(),
+    [year]
+  );
 
-type CountdownProps = {
-  targetDate: Date;
-};
+  const timeLeft = useMemo(() => {
+    const gap = targetDate - now;
+    const second = 1000;
+    const minute = second * 60;
+    const hour = minute * 60;
+    const day = hour * 24;
 
-export function Countdown({ targetDate }: CountdownProps) {
-  const [timeLeft, setTimeLeft] = useState("");
+    return {
+      days: Math.max(0, Math.floor(gap / day)),
+      hours: Math.max(0, Math.floor((gap % day) / hour)),
+      minutes: Math.max(0, Math.floor((gap % hour) / minute)),
+      seconds: Math.max(0, Math.floor((gap % minute) / second)),
+    };
+  }, [now, targetDate]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      const distance = formatDistanceToNow(targetDate, { addSuffix: false });
-      setTimeLeft(distance);
-    }, 1000);
-
+    const interval = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(interval);
-  }, [targetDate]);
+  }, []);
+
+  const timeUnits = useMemo(
+    () => ["days", "hours", "minutes", "seconds"] as const,
+    []
+  );
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-50">
-      <Card className="w-full max-w-md p-6 shadow-lg border border-zinc-200 rounded-lg bg-white">
-        <CardHeader>
-          <h1 className="text-2xl font-bold text-center text-zinc-800">
-            🎉 Cuenta Regresiva 🎉
-          </h1>
-          <Separator className="my-2" />
-        </CardHeader>
-        <CardContent className="text-center">
-          <p
-            className={clsx(
-              "text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r",
-              "from-indigo-500 to-purple-500"
-            )}
-          >
-            {timeLeft}
-          </p>
-        </CardContent>
-        <CardFooter className="mt-4 text-center">
-          <p className="text-sm text-zinc-600">
-            ¡Prepárate para celebrar el Año Nuevo!
-          </p>
-        </CardFooter>
-      </Card>
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-10 w-full max-w-5xl">
+      {timeUnits.map((unit) => (
+        <div
+          key={unit}
+          className="flex flex-col items-center justify-center space-y-3"
+        >
+          <span className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-700">
+            {timeLeft[unit].toString().padStart(2, "0")}
+          </span>
+          <span className="text-lg text-gray-500 dark:text-gray-400">
+            {unit.toUpperCase()}
+          </span>
+        </div>
+      ))}
     </div>
   );
-}
+};
+
+export default Countdown;
