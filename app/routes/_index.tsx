@@ -1,4 +1,4 @@
-import type { MetaFunction } from "react-router";
+import type { MetaFunction } from "@remix-run/node";
 import Countdown from "~/components/Countdown";
 import Footer from "~/components/Footer";
 import TimeProgress from "~/components/TimeProgress";
