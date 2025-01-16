@@ -36,7 +36,10 @@ const TimeProgress = () => {
 
   return (
     <div className="w-full">
-      <Progress value={timeLeft.progress} className="h-4 bg-gray-800 rounded-full overflow-hidden" />
+      <Progress
+        value={timeLeft.progress}
+        className="h-4 bg-gray-800 rounded-full overflow-hidden"
+      />
       <p className="text-gray-400 mt-2 text-center">
         {year} Progress: {timeLeft.progress.toFixed(5)}%
       </p>
