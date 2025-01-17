@@ -1,56 +1,47 @@
 import { useEffect, useState } from "react";
-import SocialShare from "./SocialShare";
 import { Progress } from "~/components/ui/progress";
+import { CURRENT_YEAR } from "~/data/constants";
+import SocialShare from "./SocialShare";
 
 const TimeProgress = () => {
-  const [timeLeft, setTimeLeft] = useState({ progress: 0 });
-  const year = new Date().getFullYear();
+  const [timeLeft, setTimeLeft] = useState(0);
 
   useEffect(() => {
     const calculateProgress = () => {
-      const startDate = new Date(Date.UTC(year, 0, 1));
-      const endDate = new Date(Date.UTC(year + 1, 0, 1));
-      const now = Date.now();
-
-      const progress =
-        ((now - startDate.getTime()) /
-          (endDate.getTime() - startDate.getTime())) *
-        100;
-      return Math.min(100, Math.max(0, progress));
+      const now = new Date();
+      const yearStart = new Date(CURRENT_YEAR, 0, 1);
+      const yearEnd = new Date(CURRENT_YEAR + 1, 0, 1);
+      const totalYearTime = yearEnd.getTime() - yearStart.getTime();
+      const elapsedTime = now.getTime() - yearStart.getTime();
+      return (elapsedTime / totalYearTime) * 100;
     };
 
-    const updateProgress = () => {
-      setTimeLeft((prev) => {
-        const newProgress = calculateProgress();
-        if (Math.abs(prev.progress - newProgress) > 0.00001) {
-          return { progress: newProgress };
-        }
-        return prev;
-      });
-    };
+    const interval = setInterval(() => {
+      setTimeLeft(calculateProgress());
+    }, 1000);
 
-    updateProgress();
-    const interval = setInterval(updateProgress, 1000);
     return () => clearInterval(interval);
-  }, [year]);
+  }, []);
 
   return (
-    <div className="w-full">
-      <Progress
-        value={timeLeft.progress}
-        className="h-4 bg-gray-800 rounded-full overflow-hidden"
-      />
-      <p className="text-gray-400 mt-2 text-center">
-        {year} Progress: {timeLeft.progress.toFixed(5)}%
-      </p>
-      <div className="mt-4">
-        <div className="">
-          <SocialShare
-            url="https://nye.today"
-            title={`The year ${year} is ${timeLeft.progress.toFixed(
-              5
-            )}% complete!. Check out the progress at`}
-          />
+    <div>
+      <div className="w-full">
+        <Progress
+          value={timeLeft}
+          className="h-4 bg-gray-800 rounded-full overflow-hidden"
+        />
+        <p className="text-gray-400 mt-2 text-center">
+          The year {CURRENT_YEAR} is {timeLeft.toFixed(5)}% complete.
+        </p>
+        <div className="mt-4">
+          <div className="">
+            <SocialShare
+              url="https://nye.today"
+              title={`The year ${CURRENT_YEAR} is ${timeLeft.toFixed(
+                5
+              )}% complete!. Check out the progress at`}
+            />
+          </div>
         </div>
       </div>
     </div>
