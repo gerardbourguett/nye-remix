@@ -30,8 +30,8 @@ const TimeProgress = () => {
           value={timeLeft}
           className="h-4 bg-gray-800 rounded-full overflow-hidden"
         />
-        <p className="text-gray-400 mt-2 text-center">
-          The year {CURRENT_YEAR} is {timeLeft.toFixed(5)}% complete.
+        <p className="text-gray-400 mt-4 text-center text-xl">
+          {timeLeft.toFixed(5)}%
         </p>
         <div className="mt-4">
           <div className="">
