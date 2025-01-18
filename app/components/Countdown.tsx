@@ -1,9 +1,12 @@
+import NumberFlow, { NumberFlowGroup } from "@number-flow/react";
+import { motion } from "motion/react";
 import { useEffect, useMemo, useState } from "react";
+
+const MotionNumberFlow = motion.create(NumberFlow);
 
 const Countdown = () => {
   const [now, setNow] = useState(() => Date.now());
   const year = useMemo(() => new Date().getFullYear(), []);
-  //Targetname debe ajustarse al huso horario desde donde se visita la página
   const targetDate = useMemo(
     () => new Date(`December 31, ${year} 23:59:59`).getTime(),
     [year]
@@ -35,21 +38,27 @@ const Countdown = () => {
   );
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-10 w-full max-w-5xl">
-      {timeUnits.map((unit) => (
-        <div
-          key={unit}
-          className="flex flex-col items-center justify-center space-y-3"
-        >
-          <span className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-700">
-            {timeLeft[unit].toString().padStart(2, "0")}
-          </span>
-          <span className="text-lg text-gray-500 dark:text-gray-400">
-            {unit.toUpperCase()}
-          </span>
-        </div>
-      ))}
-    </div>
+    <NumberFlowGroup>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-10 w-full max-w-5xl">
+        {timeUnits.map((unit) => (
+          <motion.div
+            key={unit}
+            className="flex flex-col items-center justify-center space-y-3"
+            layout
+          >
+            <MotionNumberFlow
+              value={timeLeft[unit]}
+              format={{ minimumIntegerDigits: 2 }}
+              className="text-5xl font-bold text-transparent text-blue-500 dark:text-blue-400"
+              layout
+            />
+            <span className="text-lg text-gray-500 dark:text-gray-400">
+              {unit.toUpperCase()}
+            </span>
+          </motion.div>
+        ))}
+      </div>
+    </NumberFlowGroup>
   );
 };
 
